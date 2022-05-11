@@ -18,6 +18,15 @@ class MusicController extends Controller
     }
 
 
+    function MusicListFetch()
+    {
+        $musics = Music::orderBy('id', 'desc')->get();
+
+        return response()->json([
+            'musics' => $musics
+        ]);
+    }
+
 
     function MusicInsert(Request $req)
     {

@@ -14,68 +14,17 @@
     <section>
         <div class="container">
             <div class="row">
-                <div class="col-md-9">
-                    <h1>Music List</h1>
-                </div>
                 <div class="col-md-3">
                     <h4>Music Insert</h4>
                 </div>
+                <div class="col-md-9">
+                    <h4>Music List</h4>
+                </div>
+                
             </div>
 
             <div class="row">
-                <div class="col-md-9 mt-3">
-                    @if (\Session::has('delete'))
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {!! \Session::get('delete') !!}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    @endif
-
-                    @if (\Session::has('like'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {!! \Session::get('like') !!}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    @endif
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Album</th>
-                                <th>Singer</th>
-
-                               <th>Likes</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            
-                            @if (isset($music))
-                                @foreach ($music as $data)
-                                    <tr>
-                                        <td>{{ $data->title }}</td>
-                                        <td>
-                                            <a href="{{ route('AlbumSearch', $data->singer) }}">{{ $data->singer }}</a>
-                                        </td>
-                                        <td>{{ $data->like }}</td>
-                                        
-                                        <td>
-                                            <a href="{{ route('MusicViewEdit', $data->id) }}" class="btn btn-warning">View/Edit</a>
-                                            <a href="{{ route('MusicDelete', $data->id) }}" class="btn btn-danger">Delete</a>
-                                            <a href="{{ route('MusicLike', $data->id) }}" class="btn btn-primary">Like</a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                
-                            @endif
-                           
-                           
-                        </tbody>
-                    </table>
-                </div>
+                
 
                 <div class="col-md-3">
                     
@@ -117,6 +66,60 @@
                     </form>
                 </div>
 
+                <div class="col-md-9 mt-3">
+                    @if (\Session::has('delete'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {!! \Session::get('delete') !!}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
+
+                    @if (\Session::has('like'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {!! \Session::get('like') !!}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Album</th>
+                                <th>Singer</th>
+                                <th>Likes</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                         
+                                    <tr>
+                                        {{--  <td>{{ $data->title }}</td>
+                                        <td>
+                                            <a href="{{ route('AlbumSearch', $data->singer) }}">{{ $data->singer }}</a>
+                                        </td>
+                                        <td>{{ $data->like }}</td>
+                                        
+                                        <td>
+                                            <a href="{{ route('MusicViewEdit', $data->id) }}" class="btn btn-warning btn-sm">View/Edit</a>
+                                            <a href="{{ route('MusicDelete', $data->id) }}" class="btn btn-danger btn-sm">Delete</a>
+                                            <a href="{{ route('MusicLike', $data->id) }}" class="btn btn-primary btn-sm">Like</a>
+                                        </td>  --}}
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            <a href="" class="btn btn-warning btn-sm">View/Edit</a>
+                                            <a href="" class="btn btn-danger btn-sm">Delete</a>
+                                            <a href="" class="btn btn-primary btn-sm">Like</a>
+                                        </td>
+                                    </tr>
+                               
+                        </tbody>
+                    </table>
+                </div>
                 
            </div>
         </div>
@@ -145,6 +148,32 @@
 
 
     <script>
+
+        //Ajax for Fetch Data from DB
+        fetchMusic();
+        function fetchMusic(){
+            $.ajax({
+                url: '{{ route('MusicListFetch') }}',
+                type: 'GET',
+                dataType: 'json',
+                success: function(response){
+                    $('tbody').html("");
+                    $.each(response.musics, function( key, data ) {
+                       $('tbody').append(
+                        '<tr>\
+                            <td>'+data.title+'</td>\
+                            <td>'+data.singer+'</td>\
+                            <td>'+data.like+'</td>\
+                            <td><a href="{{ route('MusicViewEdit', '+data.id+') }}" class="btn btn-warning btn-sm">View/Edit</a><a href="{{ route('MusicDelete', '+data.id+') }}" class="btn btn-danger btn-sm">Delete</a><a href="{{ route('MusicLike', '+data.id+') }}" class="btn btn-primary btn-sm">Like</a></td>\
+                        </tr>'
+                       );
+                    });
+                }
+            });
+        }
+
+
+        //AJAX for Insert
 		$('form').on('submit', function (e) {
 			e.preventDefault(); // prevent the form submit
 			var url = '{{ route('MusicInsert') }}';
@@ -163,6 +192,9 @@
 					if (x.style.display === "none") {
 						x.style.display = "block";
 					}
+
+                    //Calling for fetching the latest updated data
+                    fetchMusic();
 				},
 				error: function (response) {
 					// handle error response

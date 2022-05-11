@@ -30,3 +30,7 @@ Route::post('/music/edit', 'MusicController@MusicEdit')->name('MusicEdit');
 Route::get('/music/album/search/{singer}', 'MusicController@AlbumSearch')->name('AlbumSearch');
 Route::get('/music/like/{id}', 'MusicController@MusicLike')->name('MusicLike');
 
+
+//Ajax Fetch Route
+Route::get('/music-list/fetch', 'MusicController@MusicListFetch')->name('MusicListFetch');
+
