@@ -29,7 +29,7 @@ class MusicController extends Controller
         $music->songs = $req->songs;
         $music->save();
 
-        return back()->with('success', 'Music Added Successfully');
+       
     }
 
 
