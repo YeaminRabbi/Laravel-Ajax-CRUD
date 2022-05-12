@@ -46,7 +46,10 @@ class MusicController extends Controller
     {
         $music = Music::find($id);
         $music->delete();
-        return back()->with('delete', 'Music Deleted Successfully');
+
+        return response()->json([
+            'success' => 'Music deleted successfully!'
+        ]);
     }
 
 
@@ -89,6 +92,8 @@ class MusicController extends Controller
         $music = Music::find($id);
         $music->like = $music->like + 1;
         $music->save();
-        return back()->with('like', 'Music Liked Successfully');
+        return response()->json([
+            'success' => 'Music Liked successfully!'
+        ]);
     }
 }

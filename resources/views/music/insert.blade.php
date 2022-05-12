@@ -67,23 +67,24 @@
                 </div>
 
                 <div class="col-md-9 mt-3">
-                    @if (\Session::has('delete'))
+                    <div id="MusicDeleteAlert" style="display: none;">
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {!! \Session::get('delete') !!}
+                            Music Deleted Successfully!
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                    @endif
+                    </div>
 
-                    @if (\Session::has('like'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {!! \Session::get('like') !!}
+                    <div id="MusicLikeAlert" style="display: none;">
+                        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                            Music Liked Successfully!
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                    @endif
+                    </div>
+                   
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -96,25 +97,11 @@
                         <tbody>
                          
                                     <tr>
-                                        {{--  <td>{{ $data->title }}</td>
-                                        <td>
-                                            <a href="{{ route('AlbumSearch', $data->singer) }}">{{ $data->singer }}</a>
-                                        </td>
-                                        <td>{{ $data->like }}</td>
-                                        
-                                        <td>
-                                            <a href="{{ route('MusicViewEdit', $data->id) }}" class="btn btn-warning btn-sm">View/Edit</a>
-                                            <a href="{{ route('MusicDelete', $data->id) }}" class="btn btn-danger btn-sm">Delete</a>
-                                            <a href="{{ route('MusicLike', $data->id) }}" class="btn btn-primary btn-sm">Like</a>
-                                        </td>  --}}
+                                       
                                         <td></td>
                                         <td></td>
                                         <td></td>
-                                        <td>
-                                            <a href="" class="btn btn-warning btn-sm">View/Edit</a>
-                                            <a href="" class="btn btn-danger btn-sm">Delete</a>
-                                            <a href="" class="btn btn-primary btn-sm">Like</a>
-                                        </td>
+                                        <td></td>
                                     </tr>
                                
                         </tbody>
@@ -124,21 +111,6 @@
            </div>
         </div>
     </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -164,15 +136,15 @@
                             <td>'+data.title+'</td>\
                             <td>'+data.singer+'</td>\
                             <td>'+data.like+'</td>\
-                            <td><a href="{{ route('MusicViewEdit', '+data.id+') }}" class="btn btn-warning btn-sm">View/Edit</a><a href="{{ route('MusicDelete', '+data.id+') }}" class="btn btn-danger btn-sm">Delete</a><a href="{{ route('MusicLike', '+data.id+') }}" class="btn btn-primary btn-sm">Like</a></td>\
+                            <td><button class="btn btn-warning btn-sm" onclick="musicedit('+data.id+')" data-id="'+data.id+'" >View/Edit</button> <button class="btn btn-danger btn-sm" onclick="musicdelete('+data.id+')" data-id="'+data.id+'">Delete</button> <button class="btn btn-primary btn-sm" onclick="musiclike('+data.id+')" data-id="'+data.id+'">Like</button></td>\
                         </tr>'
                        );
                     });
                 }
             });
         }
-
-
+      
+       
         //AJAX for Insert
 		$('form').on('submit', function (e) {
 			e.preventDefault(); // prevent the form submit
@@ -205,6 +177,65 @@
 			});
 			document.getElementById('FORM').reset();
 		});
+
+
+        //AJAX for Delete Data from DB
+        function musicdelete(id){
+            $.ajax({
+                url: "music/delete/"+id,
+                type: 'get',
+                data: {
+                    id: id,
+                   
+                },
+                success: function(response){
+                    console.log(response);                    
+                    var x = document.getElementById('MusicDeleteAlert');
+					if (x.style.display === "none") {
+						x.style.display = "block";
+					}
+                    //Refresh with the latest update from DB
+                    fetchMusic();
+                }
+            });
+        }
+
+
+        //AJAX for Like Data from DB
+        function musiclike(id){
+
+            var url = '{{ route("MusicLike", ":id") }}';
+            url = url.replace(':id', id);
+
+            $.ajax({
+                url: url,
+                type: 'get',
+                data: {
+                    id: id,
+                   
+                },
+                success: function(response){
+                    console.log(response);                    
+                    var x = document.getElementById('MusicLikeAlert');
+					if (x.style.display === "none") {
+						x.style.display = "block";
+					}
+                    //Refresh with the latest update from DB
+                    fetchMusic();
+                }
+            });
+        }
+
+
+        //AJAX edit data from Table
+        function musicedit(id){
+
+            var url = '{{ route("MusicViewEdit", ":id") }}';
+            url = url.replace(':id', id);
+            window.location.href =  url;
+
+            
+        }
 	</script>
 </body>
 </html>
